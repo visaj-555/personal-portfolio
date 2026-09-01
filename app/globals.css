@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Color-grading tokens — mirror tailwind.config.ts. Keep these two files in
+   sync; components should reach for Tailwind classes (bg-ink-900, text-signal,
+   etc.) and only fall back to var(--...) inside raw CSS/SVG where Tailwind
+   classes don't reach (e.g. gradient stops, SVG fills). */
+
+:root {
+  --ink-950: #0a0e14;
+  --ink-900: #0f141c;
+  --ink-800: #161d28;
+  --ink-700: #1e2733;
+
+  --text-primary: #e7ebf0;
+  --text-muted: #8b95a3;
+  --text-faint: #748090;
+
+  --signal-dim: #2c4b99;
+  --signal: #4c7eff;
+  --signal-bright: #7fa6ff;
+
+  --amber: #f5a623;
+
+  /* Single consistent light source used across cards, buttons, hero visual.
+     Keep every glow/shadow gradient angled from this same origin. */
+  --light-origin-x: 30%;
+  --light-origin-y: -10%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ink-950);
+  color: var(--text-primary);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--signal-dim);
+  color: var(--text-primary);
+}
+
+/* Utility: apply to large flat section backgrounds so they don't read as a
+   single pasted hex value. Usage: <section className="bg-ink-950 grain-surface"> */
+.grain-surface {
+  position: relative;
+}
+.grain-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* Utility: consistent single-light-source glow, reused on cards, buttons,
+   and the hero visual so highlights don't come from different directions
+   in different components. */
+.lit-surface {
+  background: radial-gradient(
+    circle at var(--light-origin-x) var(--light-origin-y),
+    rgba(79, 126, 255, 0.12),
+    transparent 60%
+  );
+}
+
+/* Accessible focus state — visible everywhere, never suppressed */
+:focus-visible {
+  outline: 2px solid var(--signal-bright);
+  outline-offset: 2px;
+}
+
+@keyframes trace-playhead {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ack-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 166, 35, 0);
+  }
+  50% {
+    box-shadow: 0 0 8px 1px rgba(245, 166, 35, 0.45);
+  }
+}
